@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package dephy.message;
+
+enum W3bstreamPayloadEncoding {
+    WPE_UTF8 = 0;
+    WPE_UTF8_JSON = 1;
+    WPE_HEX = 2;
+    WPE_BASE64 = 3;
+}
+
+message W3bstreamOptions {
+    required string topic = 1;
+    required string token = 2;
+    required W3bstreamPayloadEncoding encoding = 3; // How the payload being sent to W3bstream
+}
+
+message RawMessage {
+    required uint64 timestamp = 1;
+    required bytes from_address = 2; // ethereum address in bytes form
+    required bytes to_address = 3; // ethereum address in bytes form
+    required bool encrypted = 4; // Whether the payload is encrypted, the key should be negotiated by secp256k1.ecdh
+    required bytes payload = 5;
+    optional bytes iv = 6; // 16 bytes length IV for AES-256-CBC
+    optional W3bstreamOptions w3b = 7;
+}
+
+message SignedMessage {
+    required bytes raw = 1;
+    required bytes hash = 2;
+    required uint64 nonce = 3; // Must greater than previous message
+    required bytes signature = 4;
+    optional bytes last_edge_addr = 5;
+}

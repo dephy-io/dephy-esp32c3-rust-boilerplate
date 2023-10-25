@@ -1,0 +1,89 @@
+[package]
+name = "dephy-esp32c3-rust-boilerplate"
+version = "0.1.0"
+authors = ["krhougs <os@kt.je>"]
+edition = "2021"
+resolver = "2"
+
+[profile.release]
+opt-level = "z"
+#lto = "off"
+overflow-checks = false
+
+[profile.dev]
+debug = true    # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+overflow-checks = false
+lto = "off"
+
+[features]
+
+default = ["std", "hal", "esp-idf-sys/native"]
+
+pio = ["esp-idf-sys/pio"]
+all = ["std", "nightly", "experimental", "embassy"]
+hal = ["esp-idf-hal", "embedded-svc", "esp-idf-svc"]
+std = [
+  "alloc",
+  "esp-idf-sys/std",
+  "esp-idf-sys/binstart",
+  "embedded-svc?/std",
+  "esp-idf-hal?/std",
+  "esp-idf-svc?/std",
+]
+alloc = ["embedded-svc?/alloc", "esp-idf-hal?/alloc", "esp-idf-svc?/alloc"]
+nightly = [
+  "embedded-svc?/nightly",
+  "esp-idf-svc?/nightly",
+] # Future: "esp-idf-hal?/nightly"
+experimental = ["embedded-svc?/experimental", "esp-idf-svc?/experimental"]
+embassy = [
+  "esp-idf-hal?/embassy-sync",
+  "esp-idf-hal?/critical-section",
+  "esp-idf-svc?/embassy-time-driver",
+  "esp-idf-svc?/embassy-time-isr-queue",
+]
+
+[dependencies]
+chrono = { version = "0.4.31", default-features = false, features = [
+  "std",
+  "clock",
+] }
+log = { version = "0.4.17", default-features = false }
+esp-idf-sys = { version = "0.33.3", default-features = false }
+esp-idf-hal = { version = "0.42.1", optional = true, default-features = false }
+esp-idf-svc = { version = "0.47.1", optional = true, default-features = false }
+embedded-svc = { version = "0.26.1", optional = true, default-features = false }
+embedded-hal = "1.0.0-rc.1"
+anyhow = "1.0.75"
+hex = "0.4.3"
+heapless = "0.7.16"
+bytes = "1.5.0"
+byteorder = "1.5.0"
+esp32-nimble = "0.2.2"
+tokio = { version = "*", features = ["rt", "net", "io-util", "time", "sync"] }
+mio = { version = "0.8.8", features = ["log"] }
+mqtt-async-client = { version = "0.3.1", features = [], default-features = false }
+lazy_static = "1.4.0"
+parking_lot = "0.12.1"
+paste = "1.0.14"
+prost = "0.12.1"
+k256 = { version = "0.13.1", default-features = false, features = ["alloc", "digest", "ecdsa", "ecdsa-core", "schnorr", "signature", "std"] }
+sha3 = "0.10.8"
+
+[build-dependencies]
+embuild = "0.31.2"
+prost-build = { version = "0.12.1" }
+dotenvy = "0.15.7"
+paste = "1.0.14"
+quote = "1.0.33"
+
+[patch.crates-io]
+esp32-nimble = { git = "https://github.com/taks/esp32-nimble" }
+mio = { git = "https://github.com/tokio-rs/mio", branch = "master" }
+socket2 = { git = "https://github.com/rust-lang/socket2", branch = "master" }
+tokio = { git = "https://github.com/tokio-rs/tokio", branch = "master" }
+#esp-idf-sys = { git = "https://github.com/esp-rs/esp-idf-sys" }
+#esp-idf-hal = { git = "https://github.com/esp-rs/esp-idf-hal" }
+#esp-idf-svc = { git = "https://github.com/esp-rs/esp-idf-svc" }
+

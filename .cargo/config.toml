@@ -1,0 +1,23 @@
+[build]
+target = "riscv32imc-esp-espidf"
+#target = "xtensa-esp32-espidf"
+
+[target.xtensa-esp32-espidf]
+linker = "ldproxy"
+# runner = "espflash --monitor" # Select this runner for espflash v1.x.x
+runner = "espflash flash --monitor --partition-table huge_app.csv" # Select this runner for espflash v2.x.x
+rustflags = ["--cfg", "mio_unsupported_force_poll_poll", "--cfg", "espidf_time64"]
+
+[target.riscv32imc-esp-espidf]
+linker = "ldproxy"
+# runner = "espflash --monitor" # Select this runner for espflash v1.x.x
+runner = "espflash flash --monitor --partition-table huge_app.csv" # Select this runner for espflash v2.x.x
+rustflags = ["--cfg", "mio_unsupported_force_poll_poll", "--cfg", "espidf_time64", "-C", "default-linker-libraries"]
+
+[unstable]
+build-std = ["std", "panic_abort"]
+
+[env]
+# Note: these variables are not used when using pio builder (`cargo build --features pio`)
+ESP_IDF_VERSION = "master"
+#ESP_IDF_VERSION = "release/v4.4"
